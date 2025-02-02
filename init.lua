@@ -909,7 +909,7 @@ require('lazy').setup({
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
+      --  and try some othfrer statusline plugin
       local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
       statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -942,15 +942,24 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
-      -- If you want to configure textobjects, add a key here:
-      -- textobjects = { ... }
+      -- Add custom textobjects here
+      textobjects = {
+        select = {
+          enable = true,
+          lookahead = true, -- Automatically jump forward to textobject
+          keymaps = {
+            ["am"] = "@function.outer",  -- 'yam' yanks the outer method (function)
+            ["im"] = "@function.inner",  -- you can also define inner objects if needed
+
+          },
+        },
+      },
     },
     config = function(_, opts)
       require('nvim-treesitter.configs').setup(opts)
-
-      -- Load the repeatable move module from textobjects
+  
+      -- Optionally load repeatable moves for textobjects
       local ts_repeat_move = require('nvim-treesitter.textobjects.repeatable_move')
-      -- Set keymaps for repeat movement with ; and ,
       vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move_next)
       vim.keymap.set({ 'n', 'x', 'o' }, ',', ts_repeat_move.repeat_last_move_previous)
     end,
