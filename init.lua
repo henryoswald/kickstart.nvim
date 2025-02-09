@@ -91,8 +91,8 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
-
+vim.g.have_nerd_font = true
+--
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -156,6 +156,7 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -164,6 +165,7 @@ vim.opt.scrolloff = 10
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Disable 'u' key for undo
 vim.keymap.set('n', 'u', '<Nop>', { desc = 'Disable undo key' })
+
 
 
 -- Diagnostic keymaps
@@ -196,7 +198,16 @@ vim.keymap.set('n', 'gr', vim.lsp.buf.references, { desc = 'Go to references' })
 vim.keymap.set('n', 'gc', vim.lsp.buf.incoming_calls, { desc = 'Go to call hierarchy (incoming)' })
 vim.keymap.set('n', 'gC', vim.lsp.buf.outgoing_calls, { desc = 'Go to call hierarchy (outgoing)' })
 
-  
+
+
+-- delete without adding to yank
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+
+-- keep selection when indenting
+vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", ">", ">gv")
+
+
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -278,7 +289,7 @@ require('lazy').setup({
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-  { -- Useful plugin to show you pending keybinds.
+  {                     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -324,7 +335,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+        { '<leader>c', group = '[C]ode',     mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
@@ -338,21 +349,21 @@ require('lazy').setup({
     'folke/flash.nvim',
     event = 'VeryLazy',
     ---@type Flash.Config
-    opts = {
-      modes = {
-        char = {
-          -- Remove ';' and ',' from the default keys so they can be repeat keys
-          keys = { "f", "F", "t", "T" },
-        },
-      },
-    },
+    -- opts = {
+    -- modes = {
+    -- char = {
+    -- Remove ';' and ',' from the default keys so they can be repeat keys
+    -- keys = { "f", "F", "t", "T" },
+    -- },
+    -- },
+    -- },
     -- stylua: ignore
     keys = {
-      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+      { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+      { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+      { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+      { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
     },
   },
 
@@ -941,23 +952,31 @@ require('lazy').setup({
         enable = true,
         additional_vim_regex_highlighting = { 'ruby' },
       },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          node_incremental = "v",
+          node_decremental = "V",
+          scope_incremental = "b",
+        },
+      },
       indent = { enable = true, disable = { 'ruby' } },
       -- Add custom textobjects here
       textobjects = {
         select = {
           enable = true,
-          lookahead = true, -- Automatically jump forward to textobject
+          lookahead = true,             -- Automatically jump forward to textobject
           keymaps = {
-            ["am"] = "@function.outer",  -- 'yam' yanks the outer method (function)
-            ["im"] = "@function.inner",  -- you can also define inner objects if needed
-
+            ["am"] = "@function.outer", -- 'yam' yanks the outer method (function)
+            ["im"] = "@function.inner", -- you can also define inner objects if needed
           },
         },
+
       },
     },
     config = function(_, opts)
       require('nvim-treesitter.configs').setup(opts)
-  
+
       -- Optionally load repeatable moves for textobjects
       local ts_repeat_move = require('nvim-treesitter.textobjects.repeatable_move')
       vim.keymap.set({ 'n', 'x', 'o' }, ';', ts_repeat_move.repeat_last_move_next)
@@ -968,7 +987,7 @@ require('lazy').setup({
   {
     'nvim-treesitter/nvim-treesitter-textobjects',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    config = function() end,  -- disable auto-setup; configuration goes into nvim-treesitter.opts if needed
+    config = function() end, -- disable auto-setup; configuration goes into nvim-treesitter.opts if needed
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
