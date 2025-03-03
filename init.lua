@@ -965,10 +965,13 @@ require('lazy').setup({
       textobjects = {
         select = {
           enable = true,
-          lookahead = true,             -- Automatically jump forward to textobject
+          lookahead = true,               -- Automatically jump forward to textobject
           keymaps = {
-            ["am"] = "@function.outer", -- 'yam' yanks the outer method (function)
-            ["im"] = "@function.inner", -- you can also define inner objects if needed
+            ["am"] = "@function.outer",   -- 'yam' yanks the outer method (function)
+            ["im"] = "@function.inner",   -- you can also define inner objects if needed
+            ["ac"] = "@class.outer",
+            ["aa"] = "@assignment.outer", -- Selects entire assignment statement
+
           },
         },
 
